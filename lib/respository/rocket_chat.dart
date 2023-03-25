@@ -28,13 +28,86 @@ Future connect() async {
       }
     });
 
-    // Make method call
-    channel.sink.add(
-        '{"msg": "method", "id": "unique-id", "method": "methodName", "params": ["param1", "param2"]}');
+    // Send login request using username and password
+    const loginUsingUsernamePassword = '''
+    {
+        "msg": "method",
+        "method": "login",
+        "id":"42",
+        "params":[
+            {
+                "user": { "username": "example-user" },
+                "password": {
+                    "digest": "some-digest",
+                    "algorithm":"sha-256"
+                }
+            }
+        ]
+    }
+  ''';
 
-    // Subscribe to data changes
-    channel.sink.add(
-        '{"msg": "sub", "id": "unique-id", "name": "subscriptionName", "params": ["param1", "param2"]}');
+    channel.sink.add(loginUsingUsernamePassword);
+
+    // Send login request using username and password
+    const loginUsingOAuthProvider = '''
+    {
+    "msg": "method",
+    "method": "login",
+    "id":"42",
+    "params": [
+        {
+            "oauth": {
+                "credentialToken":"credential-token",
+                "credentialSecret":"credential-secret"
+            }
+        }
+    ]
+}
+  ''';
+
+    channel.sink.add(loginUsingOAuthProvider);
+
+    // Create Channel
+    const createChannel = '''
+    {
+    "msg": "method",
+    "method": "createChannel",
+    "id": "85",
+    "params": [
+        "channel-name",
+        ["array-of-usernames", "who-are-in-the-channel"],
+        true/false
+    ]
+}
+  ''';
+
+    /* Example Response for above
+{
+    "msg": "result",
+    "id": "85",
+    "result": [
+        { "rid": "BBkfgYT2azf7RPTTg" }
+    ]
+}
+  */
+
+    channel.sink.add(createChannel);
+
+    // To send message in a room
+    const sendMessage = '''
+    {
+    "msg": "method",
+    "method": "sendMessage",
+    "id": "42",
+    "params": [
+        {
+            "_id": "message-id",
+            "rid": "room-id",
+            "msg": "Hello World!"
+        }
+    ]
+}
+  ''';
   } catch (e) {
     log(e.toString());
   }
