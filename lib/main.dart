@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rocket_chat_flutter_demo/respository/api_service.dart';
 import 'package:rocket_chat_flutter_demo/respository/rocket_chat.dart';
+import 'package:rocket_chat_flutter_demo/screens/login_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,11 +13,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      theme: ThemeData.dark(),
+      home: LoginScreen(),
     );
   }
 }
@@ -33,7 +33,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
   void _incrementCounter() async {
-    await login();
+    await connect();
   }
 
   @override

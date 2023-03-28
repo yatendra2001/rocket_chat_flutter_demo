@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 
 Future<void> login() async {
@@ -48,5 +50,56 @@ Future<void> getGroups() async {
     // Request successful, handle response
   } else {
     // Request failed, handle error
+  }
+}
+
+Future<void> googleSSOLogin(GoogleSignInAuthentication signIn, acsCode) async {
+  final accessToken = signIn.accessToken;
+  final idToken = signIn.idToken;
+  String? acsPayload;
+
+  if (acsCode is String) {
+    acsPayload = acsCode;
+  }
+
+  final payload = acsCode != null
+      ? jsonEncode({
+          'serviceName': 'google',
+          'accessToken': accessToken,
+          'idToken': idToken,
+          'expiresIn': 3600,
+          'totp': {
+            'code': acsPayload,
+          },
+        })
+      : jsonEncode({
+          'serviceName': 'google',
+          'accessToken': accessToken,
+          'idToken': idToken,
+          'expiresIn': 3600,
+          'scope': 'profile',
+        });
+
+  try {
+    final response = await http.post(
+      Uri.parse('https://open.rocket.chat/api/v1/login'),
+      headers: {'Content-Type': 'application/json'},
+      body: payload,
+    );
+    final data = jsonDecode(response.body);
+
+    if (data['status'] == 'success') {
+      log('Login successful: ${data['data']['me']}');
+      log(jsonEncode({
+        'status': data['status'],
+        'me': data['data']['me'],
+      }));
+    }
+
+    if (data['error'] == 'totp-required') {
+      return data;
+    }
+  } catch (err) {
+    log(err.toString());
   }
 }

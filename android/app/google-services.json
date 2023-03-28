@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1046705572780",
+    "project_id": "rocketchatdemo-3b02b",
+    "storage_bucket": "rocketchatdemo-3b02b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1046705572780:android:615cee9ced273a34f04809",
+        "android_client_info": {
+          "package_name": "com.example.rocket_chat_flutter_demo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1046705572780-ijgdet0mdk8mmthc339o45ood0pf38nt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.rocket_chat_flutter_demo",
+            "certificate_hash": "38e593323cea5d47e19408b8b453740c19b748a3"
+          }
+        },
+        {
+          "client_id": "1046705572780-2cjgr4qmop2jgk2m0auqvfbhle885u16.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAM8LJp5mgGvIOrflr1YXwMQvn7-eUpWPE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1046705572780-2cjgr4qmop2jgk2m0auqvfbhle885u16.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
