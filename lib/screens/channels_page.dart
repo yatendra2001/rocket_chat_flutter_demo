@@ -5,12 +5,12 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:rocket_chat_flutter_demo/respository/api_service.dart';
 
-class ChatPage extends StatefulWidget {
+class ChannelsPage extends StatefulWidget {
   @override
-  _ChatPageState createState() => _ChatPageState();
+  _ChannelsPageState createState() => _ChannelsPageState();
 }
 
-class _ChatPageState extends State<ChatPage> {
+class _ChannelsPageState extends State<ChannelsPage> {
   List<dynamic> channels = [];
 
   @override
