@@ -72,8 +72,8 @@ class LoginScreen extends StatelessWidget {
                 ),
               ),
               onPressed: () async {
-                final result = await _handleSignIn();
-                await googleSSOLogin(result!, null);
+                final result = await getChannels();
+                // await googleSSOLogin(result!, null);
               },
               icon: Image.asset(
                 'assets/logo/google_logo.png',

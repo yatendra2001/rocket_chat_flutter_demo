@@ -19,20 +19,22 @@ Future<void> login() async {
   }
 }
 
-Future<void> getChannels() async {
-  final url = Uri.parse('https://chat.myserver.com/api/v1/channels.list');
-  final headers = {
-    'X-User-Id': 'uJK8DarWEz4KXywZrJJ',
-    'X-Auth-Token': 'HSus82-hkmVAy-gECPS-QT5G0sCISSWzEEpfA7JybCv',
-    'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
-  };
+Future<List<dynamic>?> getChannels() async {
+  log("start");
+  try {
+    final url = Uri.parse('https://open.rocket.chat/api/v1/rooms.get');
+    final headers = {
+      'X-User-Id': 'DvXACyhnLu3rTyJvK',
+      'X-Auth-Token': 'Okb3D2qSQ0eLbs0GZcb4ysfl54b7oi8VZzoTGcf-S6O',
+      'Content-Type': 'application/json',
+    };
 
-  final response = await http.get(url, headers: headers);
-
-  if (response.statusCode == 200) {
-    // Request successful, handle response
-  } else {
-    // Request failed, handle error
+    final response = await http.get(url, headers: headers);
+    final result = jsonDecode(response.body)['update'];
+    log(result.toString());
+    return result;
+  } catch (error) {
+    log(error.toString());
   }
 }
 
@@ -89,7 +91,7 @@ Future<void> googleSSOLogin(GoogleSignInAuthentication signIn, acsCode) async {
     final data = jsonDecode(response.body);
 
     if (data['status'] == 'success') {
-      log('Login successful: ${data['data']['me']}');
+      log('Login successful: ${data}');
       log(jsonEncode({
         'status': data['status'],
         'me': data['data']['me'],
