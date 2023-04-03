@@ -1,9 +1,10 @@
 # Rocket.Chat Flutter Demo
 
-![GitHub license](https://img.shields.io/github/license/yatendra2001/rocket_chat_flutter_demo)
-![GitHub issues](https://img.shields.io/github/issues/yatendra2001/rocket_chat_flutter_demo)
-![GitHub forks](https://img.shields.io/github/forks/yatendra2001/rocket_chat_flutter_demo)
-![GitHub stars](https://img.shields.io/github/stars/yatendra2001/rocket_chat_flutter_demo)
+[![Contributors][contributors-shield]][contributors-url]
+[![Forks][forks-shield]][forks-url]
+[![Stargazers][stars-shield]][stars-url]
+[![Issues][issues-shield]][issues-url]
+[![MIT License][license-shield]][license-url]
 
 This project is a part of [Google Summer of Code (GSOC) 2023](https://summerofcode.withgoogle.com/). The main goal is to create a Flutter-based Rocket.Chat mobile application that demonstrates the usage of various Rocket.Chat SDKs and APIs while providing a seamless user experience.
 
@@ -58,4 +59,16 @@ For a detailed description of the project, please check out the [GSOC Proposal](
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the [MIT License](https://github.com/yatendra2001/rocket_chat_flutter_demo/blob/master/LICENSE.txt).
+
+
+[contributors-shield]: https://img.shields.io/github/contributors/yatendra2001/rocket_chat_flutter_demo.svg?style=for-the-badge
+[contributors-url]: https://github.com/yatendra2001/rocket_chat_flutter_demo/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/yatendra2001/rocket_chat_flutter_demo.svg?style=for-the-badge
+[forks-url]: https://github.com/yatendra2001/rocket_chat_flutter_demo/network/members
+[stars-shield]: https://img.shields.io/github/stars/yatendra2001/rocket_chat_flutter_demo.svg?style=for-the-badge
+[stars-url]: https://github.com/yatendra2001/rocket_chat_flutter_demo/stargazers
+[issues-shield]: https://img.shields.io/github/issues/yatendra2001/rocket_chat_flutter_demo.svg?style=for-the-badge
+[issues-url]: https://github.com/yatendra2001/rocket_chat_flutter_demo/issues
+[license-shield]: https://img.shields.io/github/license/yatendra2001/rocket_chat_flutter_demo.svg?style=for-the-badge
+[license-url]: https://github.com/yatendra2001/rocket_chat_flutter_demo/blob/master/LICENSE.txt
