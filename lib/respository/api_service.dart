@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
+import 'package:rocket_chat_flutter_demo/utils/session_helper.dart';
 
 Future<void> login() async {
   final url = Uri.parse('http://localhost:3000/api/v1/login');
@@ -19,20 +20,40 @@ Future<void> login() async {
   }
 }
 
-Future<List<dynamic>?> getChannels() async {
+Future<List<dynamic>?> getRooms() async {
   log("start");
   try {
     final url = Uri.parse('https://open.rocket.chat/api/v1/rooms.get');
     final headers = {
-      'X-User-Id': 'DvXACyhnLu3rTyJvK',
-      'X-Auth-Token': 'Okb3D2qSQ0eLbs0GZcb4ysfl54b7oi8VZzoTGcf-S6O',
+      'X-User-Id': SessionHelper.userId!,
+      'X-Auth-Token': SessionHelper.authToken!,
       'Content-Type': 'application/json',
     };
 
     final response = await http.get(url, headers: headers);
     final result = jsonDecode(response.body)['update'];
-    log(result.toString());
     return result;
+  } catch (error) {
+    log(error.toString());
+  }
+}
+
+Future<void> getRoomsHistory({required String roomId}) async {
+  log("start");
+  try {
+    log("rooms id: $roomId");
+    final url =
+        Uri.parse('https://open.rocket.chat/api/v1/rooms.info?roomId=$roomId');
+    final headers = {
+      'X-User-Id': SessionHelper.userId!,
+      'X-Auth-Token': SessionHelper.authToken!,
+      'Content-Type': 'application/json',
+    };
+
+    final response = await http.get(url, headers: headers);
+    final result = jsonDecode(response.body);
+    log(jsonEncode(result));
+    // return result;
   } catch (error) {
     log(error.toString());
   }
@@ -55,7 +76,8 @@ Future<void> getGroups() async {
   }
 }
 
-Future<void> googleSSOLogin(GoogleSignInAuthentication signIn, acsCode) async {
+Future<Map<String, String>?> googleSSOLogin(
+    GoogleSignInAuthentication signIn, acsCode) async {
   final accessToken = signIn.accessToken;
   final idToken = signIn.idToken;
   String? acsPayload;
@@ -91,11 +113,10 @@ Future<void> googleSSOLogin(GoogleSignInAuthentication signIn, acsCode) async {
     final data = jsonDecode(response.body);
 
     if (data['status'] == 'success') {
-      log('Login successful: ${data}');
-      log(jsonEncode({
-        'status': data['status'],
-        'me': data['data']['me'],
-      }));
+      return {
+        "userId": data['data']['userId'],
+        "authToken": data['data']['authToken']
+      };
     }
 
     if (data['error'] == 'totp-required') {
