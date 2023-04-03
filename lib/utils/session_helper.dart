@@ -1,5 +1,3 @@
-import 'dart:io';
-
 class SessionHelper {
   static String? userId;
   static String? authToken;

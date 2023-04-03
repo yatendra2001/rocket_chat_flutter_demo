@@ -5,7 +5,7 @@ import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:rocket_chat_flutter_demo/repositories/auth/auth_repository.dart';
-import 'package:rocket_chat_flutter_demo/respository/api_service.dart';
+import 'package:rocket_chat_flutter_demo/repositories/rocket_chat/api_service.dart';
 import 'package:rocket_chat_flutter_demo/screens/screens.dart';
 import 'package:rocket_chat_flutter_demo/utils/session_helper.dart';
 
