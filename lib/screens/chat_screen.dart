@@ -6,7 +6,6 @@ import 'package:intl/intl.dart';
 import 'package:rocket_chat_flutter_demo/models/chat_room.dart';
 import 'package:rocket_chat_flutter_demo/models/message.dart';
 import 'package:rocket_chat_flutter_demo/utils/session_helper.dart';
-import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:uuid/uuid.dart';
 import 'package:http/http.dart' as http;
@@ -135,6 +134,18 @@ class _ChatScreenState extends State<ChatScreen> {
 
       if (response.statusCode == 200) {
         final parsedResponse = jsonDecode(response.body);
+        // Add the sent message to the local messages list
+        setState(() {
+          _messages.add(
+            Message(
+              id: const Uuid().v4(),
+              text: inputMessage,
+              senderId: SessionHelper.userId!,
+              sender: "You",
+              time: DateTime.now(),
+            ),
+          );
+        });
         log('Message sent successfully: ${parsedResponse.toString()}');
       } else {
         log('Failed to send message. Please check your roomId, userId, and authToken.');

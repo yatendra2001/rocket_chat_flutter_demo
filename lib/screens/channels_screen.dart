@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:rocket_chat_flutter_demo/models/chat_room.dart';
-import 'package:rocket_chat_flutter_demo/respository/api_service.dart';
+import 'package:rocket_chat_flutter_demo/repositories/repositories.dart';
 import 'package:rocket_chat_flutter_demo/screens/screens.dart';
 
 class ChannelsScreen extends StatefulWidget {
