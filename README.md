@@ -6,8 +6,7 @@
 [![Issues][issues-shield]][issues-url]
 [![MIT License][license-shield]][license-url]
 
-This project is a part of [Google Summer of Code (GSOC) 2023](https://summerofcode.withgoogle.com/). The main goal is to create a Flutter-based Rocket.Chat mobile application that demonstrates the usage of various Rocket.Chat SDKs and APIs while providing a seamless user experience.
-
+This project is a part of [Google Summer of Code (GSOC) 2023](https://summerofcode.withgoogle.com/). The main goal is to create an easy to integrate flutter component to embed Rocket.Chat into any existing and new flutter applications while providing a seamless user experience.
 For a detailed description of the project, please check out the [GSOC Proposal](https://docs.google.com/document/d/1ei5KKQNkgCOSJNpyj92rK7nrqi34Y55GnhVUScvBDxA/edit?usp=sharing).
 
 ## Features
@@ -18,7 +17,7 @@ For a detailed description of the project, please check out the [GSOC Proposal](
 - Message Sending and Receiving
 - Message Reactions
 - File Uploads and Previews
-- Push Notifications
+- Stream Notifications
 - Threaded Messages
 - Search and Filtering
 - End-to-End Encryption (E2EE)
