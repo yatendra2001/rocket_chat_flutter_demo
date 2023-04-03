@@ -6,8 +6,19 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:rocket_chat_flutter_demo/repositories/auth/auth_repository.dart';
 import 'package:rocket_chat_flutter_demo/respository/api_service.dart';
+import 'package:rocket_chat_flutter_demo/screens/screens.dart';
+import 'package:rocket_chat_flutter_demo/utils/session_helper.dart';
 
 class LoginScreen extends StatelessWidget {
+  static const routeName = '/login-screen';
+  LoginScreen({Key? key}) : super(key: key);
+  static Route route() {
+    return MaterialPageRoute(
+      settings: const RouteSettings(name: routeName),
+      builder: (context) => LoginScreen(),
+    );
+  }
+
   final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email', 'openid']);
 
   Future<GoogleSignInAuthentication?> _handleSignIn() async {
@@ -46,6 +57,7 @@ class LoginScreen extends StatelessWidget {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Image.asset(
               'assets/logo/rocket_chat_logo.png',
@@ -72,17 +84,30 @@ class LoginScreen extends StatelessWidget {
                 ),
               ),
               onPressed: () async {
-                final result = await getChannels();
-                // await googleSSOLogin(result!, null);
+                final result = await _handleSignIn();
+                final data = await googleSSOLogin(result!, null);
+                SessionHelper.userId = data!["userId"];
+                SessionHelper.authToken = data["authToken"];
+                log(SessionHelper.userId!);
+                log(SessionHelper.authToken!);
+                Navigator.of(context).pushNamed(ChannelsScreen.routeName);
               },
               icon: Image.asset(
                 'assets/logo/google_logo.png',
                 height: 25,
                 width: 25,
               ),
-              label: Text(
+              label: const Text(
                 'Sign in with Google',
                 style: TextStyle(fontSize: 18, color: Colors.black),
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Access your open.rocket.chat server',
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.white,
               ),
             ),
           ],

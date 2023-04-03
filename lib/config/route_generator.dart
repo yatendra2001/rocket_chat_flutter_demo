@@ -12,10 +12,12 @@ class RouteGenerator {
           settings: const RouteSettings(name: '/'),
           builder: (_) => const Scaffold(),
         );
-      // case SplashScreen.routeName:
-      //   return SplashScreen.route();
-      // case LoginScreen.routeName:
-      //   return LoginScreen.route();
+      case ChatScreen.routeName:
+        return ChatScreen.route(args: settings.arguments as ChatScreenArgs);
+      case ChannelsScreen.routeName:
+        return ChannelsScreen.route();
+      case LoginScreen.routeName:
+        return LoginScreen.route();
       // case NavScreen.routeName:
       //   return NavScreen.route();
       // case PhoneScreen.routeName:
