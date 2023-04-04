@@ -40,70 +40,13 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _textController = TextEditingController();
   List<Message> _messages = [];
-
   late WebSocketChannel _channel;
+  String? _typingStatus;
 
   @override
   void initState() {
     super.initState();
     getMessageHistoryUsingRest();
-  }
-
-  void sendMessage({required String inputMessage}) async {
-    try {
-      log("Sending message request");
-      final uri = Uri.parse('wss://open.rocket.chat/websocket');
-      _channel = WebSocketChannel.connect(uri);
-      _channel.sink.add(jsonEncode({
-        "msg": "connect",
-        "version": "1",
-        "support": ["1"]
-      }));
-
-      _channel.stream.listen((message) {
-        log('Received: $message');
-        final parsedMessage = jsonDecode(message);
-
-        if (parsedMessage['msg'] == 'ping') {
-          // Respond with 'pong' to keep the connection alive
-          _channel.sink.add('{"msg": "pong"}');
-        } else if (parsedMessage['msg'] == 'connected') {
-          // Respond with 'pong' to keep the connection alive
-          _channel.sink.add('{"msg": "pong"}');
-          String roomID = widget.chatRoom.id;
-
-          _channel.sink.add(jsonEncode({
-            "msg": "method",
-            "method": "sendMessage",
-            "id": "2",
-            "params": [
-              {
-                "_id": const Uuid().v4(),
-                "rid": roomID,
-                "msg": inputMessage,
-              }
-            ],
-            "authToken": "${SessionHelper.authToken}",
-            "userId": "${SessionHelper.userId}",
-          }));
-        }
-      });
-
-      // Add the sent message to the local messages list
-      setState(() {
-        _messages.add(
-          Message(
-            id: const Uuid().v4(),
-            text: inputMessage,
-            senderId: SessionHelper.userId!,
-            sender: "You",
-            time: DateTime.now(),
-          ),
-        );
-      });
-    } catch (error) {
-      log(error.toString());
-    }
   }
 
   void sendMessageUsingRest({required String inputMessage}) async {
@@ -155,73 +98,20 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  void getMessageHistory() async {
-    try {
-      log("Sending message history request");
-      log("roomid: ${widget.chatRoom.id}, userId: ${SessionHelper.userId}, authToken: ${SessionHelper.authToken}");
-      final uri = Uri.parse('wss://open.rocket.chat/websocket');
-      _channel = WebSocketChannel.connect(uri);
+  void sendTypingStatus({required bool isTyping}) {
+    if (_channel != null) {
       _channel.sink.add(jsonEncode({
-        "msg": "connect",
-        "version": "1",
-        "support": ["1"]
+        "msg": "method",
+        "method": "stream-notify-room",
+        "id": "3",
+        "params": [
+          "${widget.chatRoom.id}/typing",
+          SessionHelper.username,
+          isTyping
+        ],
+        "authToken": "${SessionHelper.authToken}",
+        "userId": "${SessionHelper.userId}",
       }));
-
-      _channel.stream.listen((message) async {
-        log('Received: $message');
-        final parsedMessage = jsonDecode(message);
-
-        if (parsedMessage['msg'] == 'connected') {
-          _channel.sink.add(jsonEncode({
-            "msg": "method",
-            "method": "login",
-            "id": "0",
-            "params": [
-              {"resume": "${SessionHelper.authToken}"}
-            ]
-          }));
-        }
-
-        if (parsedMessage['msg'] == 'result' && parsedMessage['id'] == '0') {
-          _channel.sink.add(jsonEncode({
-            "msg": "sub",
-            "id": "2",
-            "name": "stream-room-messages",
-            "params": [(widget.chatRoom.id), false]
-          }));
-
-          String roomID = widget.chatRoom.id;
-
-          _channel.sink.add(jsonEncode({
-            "msg": "method",
-            "method": "loadHistory",
-            "id": "1",
-            "params": [
-              roomID,
-              null,
-              50,
-              {"\$date": DateTime.now().millisecondsSinceEpoch},
-              {
-                "userId": "${SessionHelper.userId}",
-                "authToken": "${SessionHelper.authToken}"
-              }
-            ]
-          }));
-        }
-
-        if (parsedMessage['msg'] == 'ping') {
-          _channel.sink.add('{"msg": "pong"}');
-        }
-        if (parsedMessage.containsKey('result') &&
-            parsedMessage['result'].containsKey('messages')) {
-          List<dynamic> messages = parsedMessage['result']['messages'];
-          log(messages.toString());
-        } else {
-          log("Failed to load room history. Please check your roomId, userId, and authToken.");
-        }
-      });
-    } catch (error) {
-      log(error.toString());
     }
   }
 
@@ -247,6 +137,52 @@ class _ChatScreenState extends State<ChatScreen> {
           'X-User-Id': SessionHelper.userId!,
         },
       );
+
+      // Subscribe to typing events
+      final uri = Uri.parse('wss://open.rocket.chat/websocket');
+      _channel = WebSocketChannel.connect(uri);
+      _channel.sink.add(jsonEncode({
+        "msg": "connect",
+        "version": "1",
+        "support": ["1"],
+      }));
+      _channel.stream.listen((message) {
+        log('Received: $message');
+        final parsedMessage = jsonDecode(message);
+
+        if (parsedMessage['msg'] == 'ping') {
+          _channel.sink.add('{"msg": "pong"}');
+        } else if (parsedMessage['msg'] == 'connected') {
+          _channel.sink.add(jsonEncode({
+            "msg": "method",
+            "method": "login",
+            "id": "1",
+            "params": [
+              {"resume": "${SessionHelper.authToken}"}
+            ]
+          }));
+        } else if (parsedMessage['msg'] == 'result' &&
+            parsedMessage['id'] == '0') {
+          _channel.sink.add(jsonEncode({
+            "msg": "sub",
+            "id": "1",
+            "name": "stream-notify-room",
+            "params": ["${widget.chatRoom.id}/typing", false],
+          }));
+        } else if (parsedMessage['msg'] == 'changed' &&
+            parsedMessage['collection'] == 'stream-notify-room') {
+          final fields = parsedMessage['fields'];
+          final eventName = fields['eventName'].split('/')[1];
+          if (eventName == 'typing') {
+            final user = fields['args'][0];
+            final isTyping = fields['args'][1];
+            setState(() {
+              _typingStatus = isTyping ? '$user is typing' : null;
+            });
+          }
+        }
+      });
+
       if (response.statusCode == 200) {
         final parsedResponse = jsonDecode(response.body);
         List<dynamic> messagesJson = parsedResponse['messages'];
@@ -343,6 +279,13 @@ class _ChatScreenState extends State<ChatScreen> {
                       Expanded(
                         child: TextField(
                           controller: _textController,
+                          onChanged: (value) {
+                            if (value.isNotEmpty) {
+                              sendTypingStatus(isTyping: true);
+                            } else {
+                              sendTypingStatus(isTyping: false);
+                            }
+                          },
                           decoration: InputDecoration(
                             hintText: 'Type a message...',
                             border: OutlineInputBorder(
@@ -362,6 +305,18 @@ class _ChatScreenState extends State<ChatScreen> {
                     ],
                   ),
                 ),
+                if (_typingStatus != null)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Text(
+                      _typingStatus!,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontStyle: FontStyle.italic,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ),
               ],
             ),
     );
