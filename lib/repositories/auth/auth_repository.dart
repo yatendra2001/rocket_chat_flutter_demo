@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:rocket_chat_flutter_demo/repositories/auth/base_auth_repository.dart';
@@ -32,19 +34,24 @@ class AuthRepository extends BaseAuthRepository {
   // }
 
   @override
-  Future<GoogleSignInAuthentication> signInByGoogle() async {
+  Future<GoogleSignInAuthentication?> signInByGoogle() async {
     try {
-      final user = await _googleSignIn.signIn();
-      if (user != null) {
-        final googleAuth = await user.authentication;
-        // final credential = auth.GoogleAuthProvider.credential(
-        //     accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
+      _googleSignIn.signOut();
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      log(googleUser.toString());
+      if (googleUser != null) {
+        final GoogleSignInAuthentication googleAuth =
+            await googleUser.authentication;
+        final String? idToken = googleAuth.idToken;
+        final String? accessToken = googleAuth.accessToken;
+        print('idToken: $idToken');
+        print('accessToken: $accessToken');
         return googleAuth;
       }
-    } catch (e) {
-      debugPrint(e.toString());
+      return null;
+    } catch (error) {
+      log(error.toString());
     }
-    throw Exception('something went wrong');
   }
 
   // String _verificationId = "";

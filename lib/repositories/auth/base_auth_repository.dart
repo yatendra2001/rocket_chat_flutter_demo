@@ -4,7 +4,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 
 abstract class BaseAuthRepository {
   // Stream<auth.User?> get user;
-  Future<GoogleSignInAuthentication> signInByGoogle();
+  Future<GoogleSignInAuthentication?> signInByGoogle();
 
   // Future<bool> sendOTP({required String phone});
 

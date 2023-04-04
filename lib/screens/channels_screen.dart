@@ -23,7 +23,7 @@ class ChannelsScreen extends StatefulWidget {
 
 class _ChannelsScreenState extends State<ChannelsScreen> {
   List<dynamic> channels = [];
-
+  final APIServiceRepository _apiServiceRepository = APIServiceRepository();
   @override
   void initState() {
     super.initState();
@@ -32,7 +32,7 @@ class _ChannelsScreenState extends State<ChannelsScreen> {
 
   Future<void> getAllRooms() async {
     try {
-      final response = await getRooms();
+      final response = await _apiServiceRepository.getRooms();
       setState(() {
         // Initialize as empty list if null
         channels = response ?? [];
