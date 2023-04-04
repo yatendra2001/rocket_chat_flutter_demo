@@ -5,7 +5,7 @@ import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:rocket_chat_flutter_demo/repositories/auth/auth_repository.dart';
-import 'package:rocket_chat_flutter_demo/repositories/rocket_chat/api_service.dart';
+import 'package:rocket_chat_flutter_demo/repositories/rocket_chat/api_service_repository.dart';
 import 'package:rocket_chat_flutter_demo/screens/screens.dart';
 import 'package:rocket_chat_flutter_demo/utils/session_helper.dart';
 
@@ -20,36 +20,8 @@ class LoginScreen extends StatelessWidget {
   }
 
   final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email', 'openid']);
-
-  Future<GoogleSignInAuthentication?> _handleSignIn() async {
-    try {
-      _googleSignIn.signOut();
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      log(googleUser.toString());
-      if (googleUser != null) {
-        final GoogleSignInAuthentication googleAuth =
-            await googleUser.authentication;
-        final String? idToken = googleAuth.idToken;
-        final String? accessToken = googleAuth.accessToken;
-        print('idToken: $idToken');
-        print('accessToken: $accessToken');
-        return googleAuth;
-      }
-    } catch (error) {
-      log(error.toString());
-    }
-  }
-  // Future<GoogleSignInAuthentication?> _handleSignIn() async {
-  //   try {
-  //     final user = await _googleSignIn.signIn();
-  //     if (user != null) {
-  //       final result = user.authentication;
-  //       return result;
-  //     }
-  //   } catch (error) {
-  //     print(error);
-  //   }
-  // }
+  final APIServiceRepository _apiServiceRepository = APIServiceRepository();
+  final AuthRepository _authRepository = AuthRepository();
 
   @override
   Widget build(BuildContext context) {
@@ -84,8 +56,9 @@ class LoginScreen extends StatelessWidget {
                 ),
               ),
               onPressed: () async {
-                final result = await _handleSignIn();
-                final data = await googleSSOLogin(result!, null);
+                final result = await _authRepository.signInByGoogle();
+                final data =
+                    await _apiServiceRepository.googleSSOLogin(result!, null);
                 SessionHelper.userId = data!["userId"];
                 SessionHelper.authToken = data["authToken"];
                 SessionHelper.username = data["username"];
