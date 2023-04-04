@@ -105,6 +105,7 @@ Future<Map<String, String>?> googleSSOLogin(
         });
 
   try {
+    log("Rocket chat login request sent using OAuth");
     final response = await http.post(
       Uri.parse('https://open.rocket.chat/api/v1/login'),
       headers: {'Content-Type': 'application/json'},
@@ -115,7 +116,8 @@ Future<Map<String, String>?> googleSSOLogin(
     if (data['status'] == 'success') {
       return {
         "userId": data['data']['userId'],
-        "authToken": data['data']['authToken']
+        "authToken": data['data']['authToken'],
+        "username": data['data']['me']['username'],
       };
     }
 

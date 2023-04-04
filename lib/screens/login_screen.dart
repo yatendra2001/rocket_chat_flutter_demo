@@ -88,6 +88,7 @@ class LoginScreen extends StatelessWidget {
                 final data = await googleSSOLogin(result!, null);
                 SessionHelper.userId = data!["userId"];
                 SessionHelper.authToken = data["authToken"];
+                SessionHelper.username = data["username"];
                 log(SessionHelper.userId!);
                 log(SessionHelper.authToken!);
                 Navigator.of(context).pushNamed(ChannelsScreen.routeName);
